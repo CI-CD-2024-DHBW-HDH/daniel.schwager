@@ -6,9 +6,6 @@ metadata:
   name: klausur-service
   namespace: daniel-schwager
 spec:
-  clusterIP: 10.245.232.46
-  clusterIPs:
-    - 10.245.232.46
   externalTrafficPolicy: Cluster
   internalTrafficPolicy: Cluster
   ipFamilies:
@@ -16,7 +13,7 @@ spec:
   ipFamilyPolicy: SingleStack
   ports:
     - name: 8080-80
-      nodePort: 32689
+      nodePort: 32189
       port: 8080
       protocol: TCP
       targetPort: 80
