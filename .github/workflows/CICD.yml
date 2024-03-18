@@ -91,7 +91,7 @@ jobs:
         with:
           namespace: daniel-schwager
           manifests: |
-            .kubernetes/deployment.yaml
-            .kubernetes/service.yaml
+            .kubernetes/deployment.yml
+            .kubernetes/service.yml
           imagepullsecrets: |
             regcred          
