@@ -55,3 +55,43 @@ jobs:
           push: true
           tags: |
             "ghcr.io/ci-cd-2024-dhbw-hdh/daniel.schwager:latest"
+
+  deploy-k8:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+      packages: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - uses: azure/setup-kubectl@v2.0
+
+      - uses: Azure/k8s-set-context@v2
+        with:
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      - name: Create namespace
+        run: kubectl create namespace daniel-schwager --dry-run=client -o yaml | kubectl apply -f -
+          
+      - name: create image registry secret for kubernetes
+        uses: Azure/k8s-create-secret@v1.1
+        with:
+          namespace: daniel-schwager
+          container-registry-url: ghcr.io
+          container-registry-username: ${{ github.actor }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+          secret-name: regcred
+
+      - name: deploy deployment and service
+        uses: Azure/k8s-deploy@v4
+        with:
+          namespace: daniel-schwager
+          manifests: |
+            .kubernetes/deployment.yml
+            .kubernetes/service.yml
+          imagepullsecrets: |
+            regcred          
